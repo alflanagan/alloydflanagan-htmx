@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,37 +11,7 @@ import (
 //go:embed templates/*
 var resources embed.FS
 
-var t = template.Must(template.ParseFS(resources, "/usr/src/app/templates/*"))
-
-func EnvironmentCheck() {
-	// Get the current working directory -- damn, we're in /
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Current Directory:", dir)
-
-	// Read directory entries
-	entries, err := os.ReadDir("/usr")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// List files and directories
-	for _, entry := range entries {
-		info := ""
-		if entry.IsDir() {
-			info = "[DIR] "
-		} else {
-			// Optionally get file info
-			fileInfo, err := entry.Info()
-			if err == nil {
-				info = fmt.Sprintf("[FILE] (%d bytes) ", fileInfo.Size())
-			}
-		}
-		fmt.Println(info + entry.Name())
-	}
-}
+var t = template.Must(template.ParseFS(resources, "templates/*"))
 
 func main() {
 	port := os.Getenv("PORT")
@@ -51,7 +20,11 @@ func main() {
 
 	}
 
-	EnvironmentCheck()
+	Entries, _ := resources.ReadDir("templates")
+
+	for _, entry := range Entries {
+		log.Println("Found template:", entry.Name())
+	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]string{
