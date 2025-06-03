@@ -12,10 +12,10 @@ import (
 //go:embed templates/*
 var resources embed.FS
 
-var t = template.Must(template.ParseFS(resources, "templates/*"))
+var t = template.Must(template.ParseFS(resources, "/usr/src/app/templates/*"))
 
 func EnvironmentCheck() {
-	// Get the current working directory
+	// Get the current working directory -- damn, we're in /
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
@@ -23,7 +23,7 @@ func EnvironmentCheck() {
 	fmt.Println("Current Directory:", dir)
 
 	// Read directory entries
-	entries, err := os.ReadDir(dir)
+	entries, err := os.ReadDir("/usr")
 	if err != nil {
 		log.Fatal(err)
 	}
