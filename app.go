@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,7 +12,37 @@ import (
 //go:embed app/*
 var resources embed.FS
 
-var t = template.Must(template.ParseFS(resources, "/usr/src/app/templates/*"))
+var t = template.Must(template.ParseFS(resources, "../templates/*"))
+
+func EnvironmentCheck() {
+	// Get the current working directory
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Current Directory:", dir)
+
+	// Read directory entries
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// List files and directories
+	for _, entry := range entries {
+		info := ""
+		if entry.IsDir() {
+			info = "[DIR] "
+		} else {
+			// Optionally get file info
+			fileInfo, err := entry.Info()
+			if err == nil {
+				info = fmt.Sprintf("[FILE] (%d bytes) ", fileInfo.Size())
+			}
+		}
+		fmt.Println(info + entry.Name())
+	}
+}
 
 func main() {
 	port := os.Getenv("PORT")
