@@ -12,7 +12,7 @@ import (
 //go:embed templates/*
 var resources embed.FS
 
-var t = template.Must(template.ParseFS(resources, "../templates/*"))
+var t = template.Must(template.ParseFS(resources, "templates/*"))
 
 func EnvironmentCheck() {
 	// Get the current working directory
